@@ -30,10 +30,81 @@ const ptxt=p=>p<.001?"<0.001":p.toFixed(3);
 function renderExp(){const body=$("expBody");if(!exposures.length){body.innerHTML='<tr><td colspan="7" class="empty">No exposures added.</td></tr>';$("topExposure").textContent="Add one or more candidate exposures to generate an analytical summary.";return}const r=[...exposures].sort((x,y)=>y.s.rr-x.s.rr);body.innerHTML=r.map((x,i)=>`<tr class="${i===0?'best':''}"><td><b>${esc(x.name)}</b></td><td>${fp(x.s.re)}</td><td>${fp(x.s.ru)}</td><td><b>${x.s.rr.toFixed(2)}</b></td><td>${x.s.lo.toFixed(2)}–${x.s.hi.toFixed(2)}</td><td>${ptxt(x.s.p)}</td><td><button onclick="removeExposure('${x.id}')">Remove</button></td></tr>`).join("");const x=r[0];$("topExposure").innerHTML=`<b>Highest observed RR:</b> ${esc(x.name)} — RR ${x.s.rr.toFixed(2)} (95% CI ${x.s.lo.toFixed(2)}–${x.s.hi.toFixed(2)}, p ${ptxt(x.s.p)}). Ranking does not establish causality.`}
 window.removeExposure=id=>{exposures=exposures.filter(x=>x.id!==id);renderExp()};
 function addExposure(){const name=$("expName").value.trim(),a=val("a"),b=val("b"),c=val("c"),d=val("d");if(!name||[a,b,c,d].some(x=>x===null)){alert("Enter exposure name and all four 2×2 cells.");return}const s=rrStats(a,b,c,d);if(!s)return;exposures.push({id:Date.now().toString(),name,s});["expName","a","b","c","d"].forEach(id=>$(id).value="");renderExp()}
-function parseCSV(text){const lines=text.replace(/\r/g,"").split("\n").filter(x=>x.trim());if(!lines.length)return[];const p=line=>{let o=[],cur="",q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'){if(q&&line[i+1]==='"'){cur+='"';i++}else q=!q}else if(ch===","&&!q){o.push(cur);cur=""}else cur+=ch}o.push(cur);return o};const h=p(lines[0]).map(x=>x.trim());return lines.slice(1).map(l=>{const v=p(l),o={};h.forEach((x,i)=>o[x]=v[i]?.trim()??"");return o})}
-const detect=(h,c)=>c.find(x=>h.includes(x))||null;
-function analyze(rows){if(!rows.length)return;const h=Object.keys(rows[0]),age=detect(h,["age","Age","AGE"]),sex=detect(h,["sex","Sex","gender","Gender"]),onset=detect(h,["date_onset","onset_date","DateOnset"]),loc=detect(h,["locality","location","Locality","Location"]);let bits=[`<b>${rows.length}</b> records loaded.`];if(age){const a=rows.map(r=>Number(r[age])).filter(Number.isFinite).sort((a,b)=>a-b);if(a.length){const m=a.length%2?a[(a.length-1)/2]:(a[a.length/2-1]+a[a.length/2])/2;$("medianAge").textContent=m.toFixed(1)+" y";bits.push(`Median age ${m.toFixed(1)} years.`)}}if(sex){const v=rows.map(r=>r[sex].toLowerCase()).filter(Boolean),m=v.filter(x=>["m","male","lelaki"].includes(x)).length;if(v.length){$("malePct").textContent=(100*m/v.length).toFixed(1)+"%";bits.push(`Male ${(100*m/v.length).toFixed(1)}%.`)}}if(onset){const ds=rows.map(r=>r[onset]).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x));if(ds.length){$("dates").value=ds.join("\n");["indexOnset","secondOnset","lastOnset"].forEach(id=>$(id).dataset.manual="");drawCurve();bits.push(`${ds.length} valid onset dates detected.`)}}if(loc){const cc={};rows.forEach(r=>{if(r[loc])cc[r[loc]]=(cc[r[loc]]||0)+1});const t=Object.entries(cc).sort((a,b)=>b[1]-a[1])[0];if(t)bits.push(`Most frequent locality: ${esc(t[0])} (${t[1]} records).`)}$("lineSummary").innerHTML=bits.join(" ")}
+function parseCSV(text){
+ const lines=text.replace(/\r/g,"").split("\n").filter(x=>x.trim());if(!lines.length)return[];
+ const parse=line=>{let out=[],cur="",q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch=='"'){if(q&&line[i+1]=='"'){cur+='"';i++}else q=!q}else if(ch==","&&!q){out.push(cur);cur=""}else cur+=ch}out.push(cur);return out};
+ const h=parse(lines[0]).map(x=>x.trim());return lines.slice(1).map(l=>{const v=parse(l),o={};h.forEach((x,i)=>o[x]=v[i]?.trim()??"");return o})
+}
+function buildLineMap(h){return{
+ id:detectHeader(h,["case_id","Case_ID","id"]),name:detectHeader(h,["name","Nama"]),age:detectHeader(h,["age","Umur"]),sex:detectHeader(h,["sex","gender","Jantina"]),
+ onset:detectHeader(h,["date_onset","onset_date","Tarikh_Onset"]),locality:detectHeader(h,["locality","location","Lokaliti"]),class:detectHeader(h,["Kelas","class"]),hostel:detectHeader(h,["Asrama","hostel"]),dorm:detectHeader(h,["Dorm","dormitory"]),
+ hospital:detectHeader(h,["hospitalised","hospitalized","Kemasukan ke hospital"]),labResult:detectHeader(h,["Keputusan_Ujian","lab_result"]),vaccine:detectHeader(h,["Status_Vaksin_Influenza","influenza_vaccine"]),
+ temp:detectHeader(h,["Suhu badan","temperature"]),closeContact:detectHeader(h,["Kontak rapat dengan kes disahkan / bergejala?","close_contact"]),
+ classSick:detectHeader(h,["Adakah terdapat rakan sekelas yang sakit sebelum ini?"]),dormSick:detectHeader(h,["Adakah terdapat rakan dorm yang sakit sebelum ini?"]),familySick:detectHeader(h,["Adakah terdapat ahli keluarga yang sakit sebelum kembali ke sekolah?"]),
+ symptoms:{
+  "Fever":detectHeader(h,["Demam","fever"]),"Cough":detectHeader(h,["Batuk","cough"]),"Runny nose":detectHeader(h,["Selesema","coryza","runny_nose"]),"Sore throat":detectHeader(h,["Sakit_Tekak","sore_throat"]),"Headache":detectHeader(h,["Sakit_kepala","headache"]),"Body ache":detectHeader(h,["Sakit_Badan","body_ache"]),"Dyspnoea":detectHeader(h,["Sesak_Nafas","dyspnoea"])
+ },
+ activities:{
+  "Surau / religious gathering":detectHeader(h,["Aktiviti_Berkumpulan_surau"]),"Sports":detectHeader(h,["Aktiviti_Berkumpulan_sukan(nyatakan)"]),"Night prep":detectHeader(h,["Aktiviti_Berkumpulan_prep malam"]),"School feast":detectHeader(h,["Aktiviti_Berkumpulan_jamuan raya sekolah (2/4/2026)"]),"Dining hall":detectHeader(h,["Aktiviti_Berkumpulan_dewan makan"]),"Travel outside school":detectHeader(h,["Perjalanan_Luar sekolah dalam masa 7 hari(nyatakan tarikh)"])
+ }}}
+function analyzeLineList(rows){
+ if(!rows.length)return;const h=Object.keys(rows[0]);LL_MAP=buildLineMap(h);let bits=[`<b>${rows.length}</b> records loaded.`];
+ if(LL_MAP.age){const a=rows.map(r=>Number(r[LL_MAP.age])).filter(Number.isFinite).sort((a,b)=>a-b);if(a.length){const m=a.length%2?a[(a.length-1)/2]:(a[a.length/2-1]+a[a.length/2])/2;$("medianAge").textContent=m.toFixed(1)+" y";bits.push(`Median age ${m.toFixed(1)} years.`)}}
+ if(LL_MAP.sex){const v=rows.map(r=>low(r[LL_MAP.sex])).filter(Boolean),m=v.filter(x=>["m","male","lelaki"].includes(x)).length;if(v.length){$("malePct").textContent=(100*m/v.length).toFixed(1)+"%";bits.push(`Male ${(100*m/v.length).toFixed(1)}%.`)}}
+ if(LL_MAP.onset){const parsed=rows.map(r=>parseFlexibleDate(r[LL_MAP.onset])).filter(Boolean);if(parsed.length){$("dates").value=parsed.map(isoLocal).join("\n");["indexOnset","secondOnset","lastOnset"].forEach(id=>$(id).dataset.manual="");drawCurve();bits.push(`${parsed.length} valid onset dates detected.`)}}
+ const pc=LL_MAP.locality||LL_MAP.class||LL_MAP.dorm||LL_MAP.hostel;if(pc){const top=freq(rows,pc)[0];if(top)bits.push(`Most frequent ${escapeHTML(pc)}: ${escapeHTML(top[0])} (${top[1]} records).`)}
+ $("lineSummary").innerHTML=bits.join(" ");renderLineIntelligence(rows,h)
+}
+function renderLineIntelligence(rows,h){
+ const det=[];[["ID",LL_MAP.id],["Age",LL_MAP.age],["Sex",LL_MAP.sex],["Onset",LL_MAP.onset],["Class",LL_MAP.class],["Hostel",LL_MAP.hostel],["Dorm",LL_MAP.dorm],["Hospital",LL_MAP.hospital],["Lab",LL_MAP.labResult]].forEach(([n,c])=>{if(c)det.push(`${n}: ${c}`)});
+ $("detectedFields").textContent=det.length?det.join(" · "):"No standard fields detected.";
+ const onsetVals=LL_MAP.onset?rows.map(r=>norm(r[LL_MAP.onset])).filter(Boolean):[];$("detectedDateFormat").textContent=onsetVals.some(x=>/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(x))?"Slash date detected and parsed":onsetVals.some(x=>/^\d{4}-/.test(x))?"YYYY-MM-DD":"Mixed / not detected";
+ const missing=LL_MAP.onset?rows.filter(r=>!parseFlexibleDate(r[LL_MAP.onset])).length:rows.length;$("dataQuality").textContent=`${rows.length} rows · ${missing} missing/invalid onset`;
+
+ const sy=[];Object.entries(LL_MAP.symptoms).forEach(([lab,col])=>{const x=boolRate(rows,col);if(x)sy.push([lab,x.yes])});sy.sort((a,b)=>b[1]-a[1]);renderBars("symptomBars",sy,rows.length);renderPlaceBars();
+
+ const hosp=boolRate(rows,LL_MAP.hospital),vacc=boolRate(rows,LL_MAP.vaccine),contact=boolRate(rows,LL_MAP.closeContact);
+ const labPos=LL_MAP.labResult?rows.filter(r=>/positive|positif|detected|influenza\s*[ab]/i.test(norm(r[LL_MAP.labResult]))).length:null;
+ const tv=LL_MAP.temp?rows.map(r=>Number(r[LL_MAP.temp])).filter(x=>Number.isFinite(x)&&x>30&&x<45):[];
+ const stats=[["Hospitalised",hosp?`${hosp.yes}/${hosp.valid} (${(hosp.pct*100).toFixed(1)}%)`:"—"],["Influenza vaccinated",vacc?`${vacc.yes}/${vacc.valid} (${(vacc.pct*100).toFixed(1)}%)`:"—"],["Close contact history",contact?`${contact.yes}/${contact.valid} (${(contact.pct*100).toFixed(1)}%)`:"—"],["Lab positive",labPos!==null?String(labPos):"—"],["Temperature recorded",tv.length?`${tv.length}/${rows.length}`:"—"],["Mean recorded temp",tv.length?`${(tv.reduce((a,b)=>a+b,0)/tv.length).toFixed(1)} °C`:"—"]];
+ $("caseCharacteristics").innerHTML=stats.map(([a,b])=>`<div class="stat-item"><span>${a}</span><b>${b}</b></div>`).join("");
+
+ const act=[];Object.entries(LL_MAP.activities).forEach(([lab,col])=>{if(!col)return;let n=0;rows.forEach(r=>{const v=r[col];if(truthy(v))n++;else if(norm(v)&&!["tiada","none","false","no","tidak","-"].includes(low(v)))n++});act.push([lab,n])});act.sort((a,b)=>b[1]-a[1]);renderBars("activityBars",act,rows.length);
+
+ const sig=[];const d=freq(rows,LL_MAP.dorm),c=freq(rows,LL_MAP.class);
+ if(d[0]&&d[0][1]>=Math.max(3,rows.length*.15))sig.push(["high","Dorm concentration",`${d[0][1]} cases (${(d[0][1]/rows.length*100).toFixed(1)}%) are in ${d[0][0]}. Review dorm-level transmission and shared activities.`]);
+ if(c[0]&&c[0][1]>=Math.max(3,rows.length*.15))sig.push(["medium","Class concentration",`${c[0][1]} cases (${(c[0][1]/rows.length*100).toFixed(1)}%) are in ${c[0][0]}.`]);
+ const pd=boolRate(rows,LL_MAP.dormSick);if(pd&&pd.pct>=.3)sig.push(["medium","Prior sick dorm contact",`${(pd.pct*100).toFixed(1)}% reported a dorm mate sick previously.`]);
+ const pc2=boolRate(rows,LL_MAP.classSick);if(pc2&&pc2.pct>=.3)sig.push(["medium","Prior sick class contact",`${(pc2.pct*100).toFixed(1)}% reported a classmate sick previously.`]);
+ const fam=boolRate(rows,LL_MAP.familySick);if(fam&&fam.yes>0)sig.push(["info","Possible community/family seeding",`${fam.yes} case(s) reported an ill family member before return to school.`]);
+ if(!sig.length)sig.push(["info","No automatic clustering signal","No configured threshold was triggered. Review the descriptive tables and epidemic curve."]);
+ $("epiSignals").innerHTML=sig.map(([cl,t,tx])=>`<div class="signal ${cl}"><b>${t}</b><span>${tx}</span></div>`).join("")
+}
+function renderPlaceBars(){if(!lineRows.length)return;const col=currentPlaceMode==="class"?LL_MAP.class:currentPlaceMode==="dorm"?LL_MAP.dorm:LL_MAP.hostel;renderBars("placeBars",freq(lineRows,col),lineRows.length)}
 function report(){overview();updateClosure();const name=$("outbreakName").value.trim()||"The outbreak",r=currentRule(),c=val("cases"),pop=val("population"),d=val("deaths"),ar=pct(c,pop),cfr=pct(d,c);let s=`${name} was assessed using the available investigation data. `;if(c!==null)s+=`${c} cases were identified`;if(ar!==null)s+=` among a population at risk of ${pop}, giving an attack rate of ${(ar*100).toFixed(1)}%`;s+=". ";if(cfr!==null)s+=`${d} death(s) were reported (CFR ${(cfr*100).toFixed(1)}%). `;if(parseDates().length)s+=`Earliest recorded onset was ${$("indexOnset").value}, peak onset ${$("peakDate").textContent}, and latest recorded onset ${$("lastOnset").value}. `;if(r)s+=`Disease rule: ${r.name}; ${$("ruleBasis").value}. Projected review date: ${$("cProjected").textContent}. Current status: ${$("closureStatus").querySelector("b").textContent}. `;$("reportText").textContent=s}
 function demo(){$("outbreakName").value="Typhoid Outbreak";$("disease").value="typhoid";$("location").value="Demo Institution";$("population").value=250;$("cases").value=35;$("hospitalised").value=4;$("deaths").value=1;$("contacts").value=75;$("secondary").value=12;$("reviewDate").value="2026-10-24";const counts={"2026-09-01":3,"2026-09-02":4,"2026-09-03":5,"2026-09-04":6,"2026-09-05":5,"2026-09-06":4,"2026-09-07":3,"2026-09-08":2,"2026-09-09":1,"2026-09-10":1,"2026-09-11":1};$("dates").value=Object.entries(counts).flatMap(([d,n])=>Array(n).fill(d)).join("\n");applyRule();overview();report()}
 function reset(){document.querySelectorAll("input:not([type=file]),textarea").forEach(e=>e.value="");$("disease").value="";exposures=[];["kCases","kAR","kCFR","kSAR","kHosp","medianAge","malePct","peakDate","spanDays","cIndex","cLast","cWindow","cProjected","cSince"].forEach(id=>$(id).textContent="—");$("qc").innerHTML="";$("lineSummary").textContent="No line list loaded. Manual onset dates can still be entered below.";$("reportText").textContent="Complete the outbreak profile and analyses, then generate the summary.";applyRule();renderExp();drawCurve()}
 document.addEventListener("DOMContentLoaded",()=>{$("reviewDate").value=new Date().toISOString().slice(0,10);$("disease").addEventListener("change",applyRule);$("calcOverview").onclick=overview;$("drawCurve").onclick=()=>drawCurve();$("updateClosure").onclick=()=>updateClosure();$("addExposure").onclick=addExposure;$("demo").onclick=demo;$("reset").onclick=reset;$("generateReport").onclick=report;$("copyReport").onclick=async()=>{await navigator.clipboard.writeText($("reportText").textContent);$("copyReport").textContent="Copied";setTimeout(()=>$("copyReport").textContent="Copy summary",1200)};$("printReport").onclick=()=>window.print();["indexOnset","secondOnset","lastOnset"].forEach(id=>$(id).addEventListener("change",e=>{e.target.dataset.manual="1";updateClosure()}));["requiredDays","reviewDate"].forEach(id=>$(id).addEventListener("change",()=>updateClosure()));$("csvFile").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>analyze(parseCSV(r.result));r.readAsText(f)});applyRule();renderExp();drawCurve()});
+
+const norm=s=>String(s??"").trim();
+const low=s=>norm(s).toLowerCase();
+function truthy(v){const x=low(v);return v===true||v===1||["true","yes","ya","y","1","positive","positif"].includes(x)}
+function falsey(v){const x=low(v);return v===false||v===0||["false","no","tidak","n","0","negative","negatif"].includes(x)}
+function parseFlexibleDate(v){
+ const s=norm(v); if(!s)return null;
+ if(/^\d{4}-\d{1,2}-\d{1,2}$/.test(s)){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)}
+ if(/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)){const [a,b,y]=s.split("/").map(Number);return new Date(y,a-1,b)}
+ if(/^\d{1,2}-\d{1,2}-\d{4}$/.test(s)){const [d,m,y]=s.split("-").map(Number);return new Date(y,m-1,d)}
+ const d=new Date(s);return isNaN(d)?null:d
+}
+function isoLocal(d){if(!d||isNaN(d))return "";return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function detectHeader(headers,candidates){const map=new Map(headers.map(h=>[low(h),h]));for(const c of candidates){if(map.has(low(c)))return map.get(low(c))}return null}
+function freq(rows,col){const o={};if(!col)return[];rows.forEach(r=>{const v=norm(r[col]);if(v&&!["nan","na","n/a","-","tiada","none"].includes(low(v)))o[v]=(o[v]||0)+1});return Object.entries(o).sort((a,b)=>b[1]-a[1])}
+function boolRate(rows,col){if(!col)return null;let yes=0,valid=0;rows.forEach(r=>{const v=r[col];if(truthy(v)){yes++;valid++}else if(falsey(v)){valid++}});return valid?{yes,valid,pct:yes/valid}:null}
+function renderBars(target,items,total){
+ const el=$(target);if(!el)return;
+ if(!items.length){el.innerHTML='<div class="empty-panel">No usable data detected.</div>';return}
+ const max=Math.max(...items.map(x=>x[1]),1);
+ el.innerHTML=items.slice(0,10).map(([label,n])=>`<div class="bar-row"><div class="bar-label" title="${escapeHTML(label)}">${escapeHTML(label)}</div><div class="bar-track"><div class="bar-fill" style="width:${(n/max*100).toFixed(1)}%"></div></div><div class="bar-value">${n}${total?` (${(n/total*100).toFixed(1)}%)`:""}</div></div>`).join("")
+}
+let LL_MAP={}; let currentPlaceMode="class";

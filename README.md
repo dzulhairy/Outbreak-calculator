@@ -1,15 +1,15 @@
-# Field Outbreak Investigator V1.2
+# Field Outbreak Investigator V1.3
 
-Malaysia-focused outbreak-monitoring upgrade.
+Direct support for Malaysian PKD-style outbreak line lists, including the uploaded SMIDI 2026 ILI line listing.
 
-## Auto-calculated MOH Malaysia timing rules in V1.2
-- Typhoid / Paratyphoid: 42 days from last-case onset.
-- Hepatitis A: 56 days from last-case onset.
-- Chikungunya: 14 days from last-case onset.
-- Dengue: 14-day operational monitoring window, explicitly labelled operational rather than universal formal closure.
-- MERS-CoV: 28-day historical MOH Malaysia monitoring precedent.
-- Dysentery: MOH specifies 2 incubation periods of the causative organism; user enters the agent-specific number of days.
+New outputs:
+- flexible parsing for slash dates such as 4/7/2026
+- automatic mapping of Case_ID, Umur, Jantina, Kelas, Asrama, Dorm and Tarikh_Onset
+- symptom frequency profile
+- class / dorm / hostel clustering
+- hospitalisation, influenza vaccination, contact and laboratory summaries
+- activity / potential exposure frequencies
+- automatic field-epidemiology signal cards
+- existing epidemic curve, index case, last case and outbreak closure monitor retained
 
-Common diseases without a verified explicit closure timing statement remain selectable but use manual mode.
-
-Formal outbreak closure remains subject to the applicable current MOH/JKN/PKD requirement and completion of non-timing criteria.
+Important: exposure/activity percentages from a case-only line list are descriptive only. Risk ratios require an appropriate non-case/unexposed comparison group or denominator data.
