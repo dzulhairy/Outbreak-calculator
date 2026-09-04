@@ -103,25 +103,25 @@ function pText(p){
 }
 
 function interpretRR(stats, p){
-  if(!stats) return "Data jadual 2 × 2 belum mencukupi untuk mengira Risk Ratio.";
+  if(!stats) return "The 2 × 2 table does not contain enough data to calculate the Risk Ratio.";
   const rr = stats.rr;
   const ci = `${stats.low.toFixed(2)}–${stats.high.toFixed(2)}`;
 
   let statement = "";
   if(rr > 1){
-    statement = `Kumpulan terpajan mempunyai kira-kira <b>${rr.toFixed(2)} kali</b> risiko penyakit berbanding kumpulan tidak terpajan.`;
+    statement = `The exposed group has approximately <b>${rr.toFixed(2)} times</b> the risk of illness compared with the unexposed group.`;
   }else if(rr < 1){
-    statement = `Kumpulan terpajan mempunyai risiko yang lebih rendah berbanding kumpulan tidak terpajan (RR < 1).`;
+    statement = `The exposed group has a lower risk of illness than the unexposed group (RR < 1).`;
   }else{
-    statement = `Risiko adalah sama dalam kedua-dua kumpulan (RR = 1.00).`;
+    statement = `The risk is the same in both groups (RR = 1.00).`;
   }
 
   const sig = (stats.low > 1 || stats.high < 1)
-    ? ` 95% CI <b>${ci}</b> tidak merentasi 1.0.`
-    : ` 95% CI <b>${ci}</b> merentasi 1.0.`;
+    ? ` 95% CI <b>${ci}</b> does not include 1.0.`
+    : ` 95% CI <b>${ci}</b> includes 1.0.`;
 
   const pbit = p === null ? "" : ` Pearson χ² p = <b>${pText(p)}</b>.`;
-  const correction = stats.corrected ? ` Pengiraan RR/CI menggunakan pembetulan 0.5 kerana terdapat sel bernilai sifar.` : "";
+  const correction = stats.corrected ? ` A 0.5 continuity correction was used for RR/CI because at least one cell was zero.` : "";
 
   return statement + sig + pbit + correction;
 }
@@ -170,13 +170,13 @@ function calculate(){
 
   const sections = [];
   if(attack !== null){
-    sections.push(`Attack rate keseluruhan ialah <b>${(attack*100).toFixed(1)}%</b>.`);
+    sections.push(`Overall attack rate is <b>${(attack*100).toFixed(1)}%</b>.`);
   }
   if(secondary !== null){
-    sections.push(`Secondary attack rate ialah <b>${(secondary*100).toFixed(1)}%</b>.`);
+    sections.push(`Secondary attack rate is <b>${(secondary*100).toFixed(1)}%</b>.`);
   }
   if(fatality !== null){
-    sections.push(`Case fatality rate ialah <b>${(fatality*100).toFixed(1)}%</b>.`);
+    sections.push(`Case fatality rate is <b>${(fatality*100).toFixed(1)}%</b>.`);
   }
   sections.push(interpretRR(rrStats,p));
 
@@ -220,17 +220,17 @@ function drawCurve(){
   const W=900, H=340, L=62, R=20, T=28, B=76;
   add("line",{x1:L,y1:H-B,x2:W-R,y2:H-B,stroke:"#111","stroke-width":"2.5"});
   add("line",{x1:L,y1:T,x2:L,y2:H-B,stroke:"#111","stroke-width":"2.5"});
-  add("text",{x:16,y:(T+H-B)/2,transform:`rotate(-90 16 ${(T+H-B)/2})`,"font-size":"12","font-weight":"800","text-anchor":"middle"},"Bilangan kes");
+  add("text",{x:16,y:(T+H-B)/2,transform:`rotate(-90 16 ${(T+H-B)/2})`,"font-size":"12","font-weight":"800","text-anchor":"middle"},"Number of cases");
 
   if(data.length === 0){
-    add("text",{x:L+15,y:T+30,"font-size":"15","font-weight":"700",fill:"#666"},"Masukkan tarikh onset untuk menjana epidemic curve.");
+    add("text",{x:L+15,y:T+30,"font-size":"15","font-weight":"700",fill:"#666"},"Enter symptom onset dates to generate the epidemic curve.");
     $("curveSummary").textContent = "Tiada data onset.";
     return;
   }
 
   const total = data.reduce((s,[,n])=>s+n,0);
   const maxCount = Math.max(...data.map(([,n])=>n));
-  $("curveSummary").textContent = `${total} kes · ${data.length} tarikh onset`;
+  $("curveSummary").textContent = `${total} cases · ${data.length} onset dates`;
 
   const plotW = W-L-R;
   const plotH = H-T-B;
@@ -296,7 +296,7 @@ function resetAll(){
   $("arExposedDetail").textContent = "—";
   $("arUnexposedDetail").textContent = "—";
   $("rrCI").textContent = "95% CI: —";
-  $("interpretation").innerHTML = 'Masukkan data atau tekan <b>LOAD DEMO</b>, kemudian tekan <b>KIRA WABAK</b>.';
+  $("interpretation").innerHTML = 'Enter the data or click <b>LOAD DEMO</b>, then click <b>CALCULATE OUTBREAK</b>.';
   drawCurve();
   window.scrollTo({top:0,behavior:"smooth"});
 }

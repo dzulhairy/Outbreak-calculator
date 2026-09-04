@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="ms">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#159bd7">
-  <meta name="description" content="ZAP! Outbreak Calculator - kalkulator epidemiologi lapangan untuk outbreak investigation.">
+  <meta name="description" content="ZAP! Outbreak Calculator - a field epidemiology calculator for outbreak investigation.">
   <title>ZAP! Outbreak Calculator</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -14,59 +14,59 @@
       <header class="hero">
         <div class="kicker">FIELD EPIDEMIOLOGY TOOL</div>
         <h1>ZAP! OUTBREAK</h1>
-        <p>Kalkulator Siasatan Wabak</p>
+        <p>Outbreak Investigation Calculator</p>
       </header>
 
       <div class="content">
         <section class="panel">
-          <div class="section-title"><span>1</span> Data asas wabak</div>
+          <div class="section-title"><span>1</span> Outbreak data</div>
           <div class="grid two">
             <label>
-              <span>Populasi berisiko</span>
-              <input id="population" type="number" min="0" step="1" inputmode="numeric" placeholder="Contoh: 250">
+              <span>Population at risk</span>
+              <input id="population" type="number" min="0" step="1" inputmode="numeric" placeholder="Example: 250">
             </label>
             <label>
-              <span>Jumlah kes</span>
-              <input id="cases" type="number" min="0" step="1" inputmode="numeric" placeholder="Contoh: 35">
+              <span>Total cases</span>
+              <input id="cases" type="number" min="0" step="1" inputmode="numeric" placeholder="Example: 35">
             </label>
             <label>
-              <span>Jumlah kematian</span>
-              <input id="deaths" type="number" min="0" step="1" inputmode="numeric" placeholder="Contoh: 1">
+              <span>Total deaths</span>
+              <input id="deaths" type="number" min="0" step="1" inputmode="numeric" placeholder="Example: 1">
             </label>
             <label>
-              <span>Kontak rentan pada permulaan</span>
-              <input id="susceptibleContacts" type="number" min="0" step="1" inputmode="numeric" placeholder="Contoh: 75">
-              <small>Denominator untuk Secondary Attack Rate.</small>
+              <span>Susceptible contacts at start</span>
+              <input id="susceptibleContacts" type="number" min="0" step="1" inputmode="numeric" placeholder="Example: 75">
+              <small>Denominator for the Secondary Attack Rate.</small>
             </label>
             <label>
-              <span>Kes sekunder</span>
-              <input id="secondaryCases" type="number" min="0" step="1" inputmode="numeric" placeholder="Contoh: 12">
+              <span>Secondary cases</span>
+              <input id="secondaryCases" type="number" min="0" step="1" inputmode="numeric" placeholder="Example: 12">
             </label>
           </div>
         </section>
 
         <section class="panel">
-          <div class="section-title"><span>2</span> Jadual 2 × 2 pendedahan</div>
+          <div class="section-title"><span>2</span> 2 × 2 exposure table</div>
 
           <div class="table-wrap">
-            <table class="two-by-two" aria-label="Jadual dua kali dua pendedahan dan penyakit">
+            <table class="two-by-two" aria-label="2 by 2 table of exposure and disease">
               <thead>
                 <tr>
                   <th></th>
-                  <th>Sakit</th>
-                  <th>Tidak sakit</th>
+                  <th>Ill</th>
+                  <th>Not ill</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <th>Terpajan</th>
-                  <td><input id="a" type="number" min="0" step="1" inputmode="numeric" aria-label="Terpajan dan sakit"></td>
-                  <td><input id="b" type="number" min="0" step="1" inputmode="numeric" aria-label="Terpajan dan tidak sakit"></td>
+                  <th>Exposed</th>
+                  <td><input id="a" type="number" min="0" step="1" inputmode="numeric" aria-label="Exposed dan sakit"></td>
+                  <td><input id="b" type="number" min="0" step="1" inputmode="numeric" aria-label="Exposed dan tidak sakit"></td>
                 </tr>
                 <tr>
-                  <th>Tidak terpajan</th>
-                  <td><input id="c" type="number" min="0" step="1" inputmode="numeric" aria-label="Tidak terpajan dan sakit"></td>
-                  <td><input id="d" type="number" min="0" step="1" inputmode="numeric" aria-label="Tidak terpajan dan tidak sakit"></td>
+                  <th>Not exposed</th>
+                  <td><input id="c" type="number" min="0" step="1" inputmode="numeric" aria-label="Not exposed dan sakit"></td>
+                  <td><input id="d" type="number" min="0" step="1" inputmode="numeric" aria-label="Not exposed dan tidak sakit"></td>
                 </tr>
               </tbody>
             </table>
@@ -78,22 +78,22 @@
         </section>
 
         <section class="panel">
-          <div class="section-title"><span>3</span> Tarikh onset untuk epidemic curve</div>
+          <div class="section-title"><span>3</span> Symptom onset dates for epidemic curve</div>
           <label>
-            <span>Satu tarikh bagi setiap kes</span>
+            <span>One onset date per case</span>
             <textarea id="onsetDates" rows="8" placeholder="2026-09-01&#10;2026-09-01&#10;2026-09-02"></textarea>
-            <small>Format terbaik: YYYY-MM-DD. Satu tarikh = satu kes.</small>
+            <small>Recommended format: YYYY-MM-DD. One date = one case.</small>
           </label>
         </section>
 
         <div class="actions">
-          <button class="btn primary" id="calculateBtn" type="button">KIRA WABAK ⚡</button>
+          <button class="btn primary" id="calculateBtn" type="button">CALCULATE OUTBREAK ⚡</button>
           <button class="btn secondary" id="demoBtn" type="button">LOAD DEMO</button>
           <button class="btn ghost" id="resetBtn" type="button">RESET</button>
         </div>
 
         <section class="panel results-panel" id="resultsPanel">
-          <div class="section-title"><span>✓</span> Keputusan</div>
+          <div class="section-title"><span>✓</span> Results</div>
 
           <div class="metrics">
             <article class="metric">
@@ -112,12 +112,12 @@
               <div class="metric-detail" id="cfrDetail">—</div>
             </article>
             <article class="metric">
-              <div class="metric-label">AR Terpajan</div>
+              <div class="metric-label">AR Exposed</div>
               <div class="metric-value" id="arExposed">—</div>
               <div class="metric-detail" id="arExposedDetail">—</div>
             </article>
             <article class="metric">
-              <div class="metric-label">AR Tidak Terpajan</div>
+              <div class="metric-label">AR Tidak Exposed</div>
               <div class="metric-value" id="arUnexposed">—</div>
               <div class="metric-detail" id="arUnexposedDetail">—</div>
             </article>
@@ -134,13 +134,13 @@
           </div>
 
           <div class="interpretation" id="interpretation">
-            Masukkan data atau tekan <b>LOAD DEMO</b>, kemudian tekan <b>KIRA WABAK</b>.
+            Enter the data or click <b>LOAD DEMO</b>, then click <b>CALCULATE OUTBREAK</b>.
           </div>
 
           <div class="chart-card">
             <div class="chart-head">
               <h2>Epidemic curve</h2>
-              <div id="curveSummary">Tiada data onset.</div>
+              <div id="curveSummary">No onset data.</div>
             </div>
             <div class="chart-scroll">
               <svg id="epiChart" role="img" aria-label="Epidemic curve" viewBox="0 0 900 340"></svg>
@@ -149,9 +149,7 @@
         </section>
 
         <div class="disclaimer">
-          <b>Nota penggunaan:</b> Ini ialah alat sokongan epidemiologi lapangan. Takrif kes, populasi berisiko,
-          tempoh inkubasi, hubungan epidemiologi dan denominators perlu ditentukan berdasarkan siasatan sebenar
-          serta garis panduan KKM semasa. Kalkulator ini tidak menggantikan penilaian epidemiologi profesional.
+          <b>Important note:</b> This is a field epidemiology decision-support tool. Case definitions, population at risk, incubation period, epidemiological links, and denominators must be determined from the actual outbreak investigation and current Ministry of Health guidance. This calculator does not replace professional epidemiological assessment.
         </div>
 
         <footer>

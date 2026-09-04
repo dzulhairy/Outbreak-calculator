@@ -1,50 +1,38 @@
-# Outbreak Calculator
+# ZAP! Outbreak Calculator — English Version
 
-GitHub Pages-ready field epidemiology calculator.
+A GitHub Pages-ready field epidemiology calculator.
 
-## Functions
-- Attack Rate
+## Included
+- Overall Attack Rate
 - Secondary Attack Rate
-- Case Fatality Rate
-- 2×2 exposure table
+- Case Fatality Rate (CFR)
+- 2 × 2 exposure table: Exposed / Not exposed × Ill / Not ill
 - Risk Ratio (RR)
 - 95% confidence interval for RR
 - Pearson chi-square p-value
-- Epidemic curve from onset dates
+- Epidemic curve from symptom onset dates
 - Automatic interpretation
-- Demo dataset and reset
+- Demo dataset
+- Reset button
 - Mobile-friendly interface
 
-## Deploy with GitHub Pages
+## Deploy / replace your current GitHub Pages version
 
-1. Create a new GitHub repository, for example:
-   `zap-outbreak-calculator`
-2. Upload these files to the repository root:
-   - `index.html`
-   - `style.css`
-   - `script.js`
-3. Commit the files.
-4. Open **Settings → Pages**.
-5. Under **Build and deployment**, choose:
-   - Source: `Deploy from a branch`
-   - Branch: `main`
-   - Folder: `/ (root)`
-6. Save.
-7. After deployment, your URL will normally be:
-   `https://YOUR-USERNAME.github.io/zap-outbreak-calculator/`
+Upload these three files to the root of your existing repository and replace the old versions:
+- index.html
+- style.css
+- script.js
 
-## Demo values
-Click **LOAD DEMO** in the app.
+Commit the changes. GitHub Pages will redeploy automatically.
 
-Expected key results:
-- Attack Rate = 14.0%
-- Secondary Attack Rate = 16.0%
-- CFR ≈ 2.9%
-- AR exposed = 40.0%
-- AR unexposed = 10.0%
-- RR = 4.00
+## Demo
+Click LOAD DEMO. Expected key outputs:
+- Attack Rate: 14.0%
+- Secondary Attack Rate: 16.0%
+- CFR: about 2.9%
+- Attack Rate Exposed: 40.0%
+- Attack Rate Unexposed: 10.0%
+- Risk Ratio: 4.00
 
-## Important epidemiology note
-The Secondary Attack Rate denominator is entered directly as the number of susceptible contacts at the start of observation. Do not automatically subtract primary cases unless that matches the outbreak definition and population structure being used.
-
-This tool is for epidemiological decision support and training; it does not replace outbreak investigation protocols or professional assessment.
+## Epidemiological note
+For the Secondary Attack Rate, the user directly enters the number of susceptible contacts at the start of the relevant observation period. The correct denominator depends on the outbreak context and case/contact definitions.
