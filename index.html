@@ -1,164 +1,116 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#159bd7">
-  <meta name="description" content="ZAP! Outbreak Calculator - a field epidemiology calculator for outbreak investigation.">
-  <title>ZAP! Outbreak Calculator</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1f33">
+<title>ZAP! Outbreak Investigator V3</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="page">
-    <section class="app-card">
-      <header class="hero">
-        <div class="kicker">FIELD EPIDEMIOLOGY TOOL</div>
-        <h1>ZAP! OUTBREAK</h1>
-        <p>Outbreak Investigation Calculator</p>
-      </header>
+<header class="topbar">
+  <div class="brand">
+    <div class="mark">Z!</div>
+    <div><b>ZAP! OUTBREAK INVESTIGATOR</b><span>Field Epidemiology Decision Support</span></div>
+  </div>
+  <div class="version">V3 PROFESSIONAL</div>
+</header>
 
-      <div class="content">
-        <section class="panel">
-          <div class="section-title"><span>1</span> Outbreak data</div>
-          <div class="grid two">
-            <label>
-              <span>Population at risk</span>
-              <input id="population" type="number" min="0" step="1" inputmode="numeric" placeholder="Example: 250">
-            </label>
-            <label>
-              <span>Total cases</span>
-              <input id="cases" type="number" min="0" step="1" inputmode="numeric" placeholder="Example: 35">
-            </label>
-            <label>
-              <span>Total deaths</span>
-              <input id="deaths" type="number" min="0" step="1" inputmode="numeric" placeholder="Example: 1">
-            </label>
-            <label>
-              <span>Susceptible contacts at start</span>
-              <input id="susceptibleContacts" type="number" min="0" step="1" inputmode="numeric" placeholder="Example: 75">
-              <small>Denominator for the Secondary Attack Rate.</small>
-            </label>
-            <label>
-              <span>Secondary cases</span>
-              <input id="secondaryCases" type="number" min="0" step="1" inputmode="numeric" placeholder="Example: 12">
-            </label>
-          </div>
-        </section>
+<main class="shell">
+<section class="hero">
+  <div>
+    <div class="eyebrow">OUTBREAK INTELLIGENCE WORKSPACE</div>
+    <h1>From line list to<br><span>epidemiological insight.</span></h1>
+    <p>Rapid descriptive and analytical outbreak assessment with person–place–time summaries, epidemic curves, exposure analysis and exportable findings.</p>
+  </div>
+  <div class="hero-card">
+    <div class="status-dot"></div>
+    <b>Analysis runs locally in your browser</b>
+    <small>Uploaded CSV data are processed on your device by this page.</small>
+  </div>
+</section>
 
-        <section class="panel">
-          <div class="section-title"><span>2</span> 2 × 2 exposure table</div>
+<nav class="tabs">
+  <a href="#profile">Overview</a><a href="#linelist">Line List</a><a href="#ppt">Person · Place · Time</a><a href="#exposure">Analytical Epi</a><a href="#report">Report</a>
+</nav>
 
-          <div class="table-wrap">
-            <table class="two-by-two" aria-label="2 by 2 table of exposure and disease">
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>Ill</th>
-                  <th>Not ill</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th>Exposed</th>
-                  <td><input id="a" type="number" min="0" step="1" inputmode="numeric" aria-label="Exposed dan sakit"></td>
-                  <td><input id="b" type="number" min="0" step="1" inputmode="numeric" aria-label="Exposed dan tidak sakit"></td>
-                </tr>
-                <tr>
-                  <th>Not exposed</th>
-                  <td><input id="c" type="number" min="0" step="1" inputmode="numeric" aria-label="Not exposed dan sakit"></td>
-                  <td><input id="d" type="number" min="0" step="1" inputmode="numeric" aria-label="Not exposed dan tidak sakit"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+<section id="profile" class="card">
+  <div class="section-head"><div><span>01</span><h2>Outbreak Profile</h2></div><p>Define the investigation denominator and core severity indicators.</p></div>
+  <div class="form-grid">
+    <label>Outbreak name<input id="outbreakName" placeholder="e.g. Acute gastroenteritis outbreak"></label>
+    <label>Disease / syndrome<input id="disease" placeholder="e.g. Acute gastroenteritis"></label>
+    <label>Location<input id="location" placeholder="e.g. District / institution"></label>
+    <label>Investigation date<input id="investigationDate" type="date"></label>
+    <label>Population at risk<input id="population" type="number" min="0" placeholder="250"></label>
+    <label>Total cases<input id="cases" type="number" min="0" placeholder="35"></label>
+    <label>Hospitalised<input id="hospitalised" type="number" min="0" placeholder="4"></label>
+    <label>Deaths<input id="deaths" type="number" min="0" placeholder="1"></label>
+    <label>Susceptible contacts at start<input id="contacts" type="number" min="0" placeholder="75"></label>
+    <label>Secondary cases<input id="secondary" type="number" min="0" placeholder="12"></label>
+  </div>
+  <div class="actions"><button class="primary" id="calcOverview">Calculate overview</button><button id="demo">Load demo</button><button class="subtle" id="reset">Reset</button></div>
+  <div id="qc" class="qc"></div>
+</section>
 
-          <div class="formula-hint">
-            <b>RR</b> = [a/(a+b)] ÷ [c/(c+d)]
-          </div>
-        </section>
+<section class="kpis">
+  <article><span>Total cases</span><b id="kCases">—</b><small id="kCasesSub">Outbreak size</small></article>
+  <article><span>Attack rate</span><b id="kAR">—</b><small id="kARSub">Cases / population at risk</small></article>
+  <article><span>CFR</span><b id="kCFR">—</b><small>Deaths / cases</small></article>
+  <article><span>Secondary AR</span><b id="kSAR">—</b><small>Secondary cases / susceptible contacts</small></article>
+  <article><span>Hospitalised</span><b id="kHosp">—</b><small id="kHospSub">Proportion of cases</small></article>
+</section>
 
-        <section class="panel">
-          <div class="section-title"><span>3</span> Symptom onset dates for epidemic curve</div>
-          <label>
-            <span>One onset date per case</span>
-            <textarea id="onsetDates" rows="8" placeholder="2026-09-01&#10;2026-09-01&#10;2026-09-02"></textarea>
-            <small>Recommended format: YYYY-MM-DD. One date = one case.</small>
-          </label>
-        </section>
+<section id="linelist" class="card">
+ <div class="section-head"><div><span>02</span><h2>Line List Analyzer</h2></div><p>Upload a CSV for automated descriptive epidemiology.</p></div>
+ <div class="upload">
+   <input type="file" id="csvFile" accept=".csv,text/csv">
+   <div><b>Upload CSV line list</b><small>Recommended columns: case_id, age, sex, locality, date_onset, hospitalised, outcome</small></div>
+ </div>
+ <div id="mapping" class="mapping hidden"></div>
+ <div id="lineSummary" class="summary-box">No line list loaded. Manual onset dates can still be entered below.</div>
+</section>
 
-        <div class="actions">
-          <button class="btn primary" id="calculateBtn" type="button">CALCULATE OUTBREAK ⚡</button>
-          <button class="btn secondary" id="demoBtn" type="button">LOAD DEMO</button>
-          <button class="btn ghost" id="resetBtn" type="button">RESET</button>
-        </div>
+<section id="ppt" class="split">
+ <div class="card">
+  <div class="section-head"><div><span>03</span><h2>Person · Place · Time</h2></div></div>
+  <div class="mini-kpis">
+   <div><span>Median age</span><b id="medianAge">—</b></div>
+   <div><span>Male</span><b id="malePct">—</b></div>
+   <div><span>Peak onset</span><b id="peakDate">—</b></div>
+   <div><span>Outbreak span</span><b id="spanDays">—</b></div>
+  </div>
+  <label class="block">Symptom onset dates <small>One date per case; YYYY-MM-DD</small><textarea id="dates" rows="8" placeholder="2026-09-01&#10;2026-09-01&#10;2026-09-02"></textarea></label>
+ </div>
+ <div class="card">
+   <div class="chart-title"><div><h2>Epidemic Curve</h2><small id="curveMeta">No onset data</small></div><button id="drawCurve">Update curve</button></div>
+   <div class="chart-scroll"><svg id="epi" viewBox="0 0 900 390"></svg></div>
+ </div>
+</section>
 
-        <section class="panel results-panel" id="resultsPanel">
-          <div class="section-title"><span>✓</span> Results</div>
+<section id="exposure" class="card">
+ <div class="section-head"><div><span>04</span><h2>Multiple Exposure Analyzer</h2></div><p>Compare candidate exposures using attack rates and risk ratios.</p></div>
+ <div class="exposure-entry">
+  <input id="expName" placeholder="Exposure name (e.g. Chicken curry)">
+  <input id="a" type="number" min="0" placeholder="Exposed + ill (a)">
+  <input id="b" type="number" min="0" placeholder="Exposed + not ill (b)">
+  <input id="c" type="number" min="0" placeholder="Unexposed + ill (c)">
+  <input id="d" type="number" min="0" placeholder="Unexposed + not ill (d)">
+  <button class="primary" id="addExposure">Add exposure</button>
+ </div>
+ <div class="table-scroll">
+ <table><thead><tr><th>Exposure</th><th>AR exposed</th><th>AR unexposed</th><th>RR</th><th>95% CI</th><th>p-value</th><th></th></tr></thead><tbody id="expBody"><tr><td colspan="7" class="empty">No exposures added.</td></tr></tbody></table>
+ </div>
+ <div id="topExposure" class="insight">Add one or more candidate exposures to generate an analytical summary.</div>
+</section>
 
-          <div class="metrics">
-            <article class="metric">
-              <div class="metric-label">Attack Rate</div>
-              <div class="metric-value" id="attackRate">—</div>
-              <div class="metric-detail" id="attackDetail">—</div>
-            </article>
-            <article class="metric">
-              <div class="metric-label">Secondary Attack Rate</div>
-              <div class="metric-value" id="secondaryAttackRate">—</div>
-              <div class="metric-detail" id="secondaryDetail">—</div>
-            </article>
-            <article class="metric">
-              <div class="metric-label">Case Fatality Rate</div>
-              <div class="metric-value" id="cfr">—</div>
-              <div class="metric-detail" id="cfrDetail">—</div>
-            </article>
-            <article class="metric">
-              <div class="metric-label">AR Exposed</div>
-              <div class="metric-value" id="arExposed">—</div>
-              <div class="metric-detail" id="arExposedDetail">—</div>
-            </article>
-            <article class="metric">
-              <div class="metric-label">AR Tidak Exposed</div>
-              <div class="metric-value" id="arUnexposed">—</div>
-              <div class="metric-detail" id="arUnexposedDetail">—</div>
-            </article>
-            <article class="metric featured">
-              <div class="metric-label">Risk Ratio</div>
-              <div class="metric-value" id="rr">—</div>
-              <div class="metric-detail" id="rrCI">95% CI: —</div>
-            </article>
-            <article class="metric">
-              <div class="metric-label">Chi-square p-value</div>
-              <div class="metric-value" id="pValue">—</div>
-              <div class="metric-detail">Pearson χ², 1 df</div>
-            </article>
-          </div>
+<section id="report" class="card">
+ <div class="section-head"><div><span>05</span><h2>Automated Epidemiological Summary</h2></div><p>Generate a concise, editable investigation summary from the entered data.</p></div>
+ <div id="reportText" class="report-text">Complete the outbreak profile and analyses, then generate the summary.</div>
+ <div class="actions"><button class="primary" id="generateReport">Generate summary</button><button id="copyReport">Copy summary</button><button id="printReport">Print / Save PDF</button></div>
+</section>
 
-          <div class="interpretation" id="interpretation">
-            Enter the data or click <b>LOAD DEMO</b>, then click <b>CALCULATE OUTBREAK</b>.
-          </div>
-
-          <div class="chart-card">
-            <div class="chart-head">
-              <h2>Epidemic curve</h2>
-              <div id="curveSummary">No onset data.</div>
-            </div>
-            <div class="chart-scroll">
-              <svg id="epiChart" role="img" aria-label="Epidemic curve" viewBox="0 0 900 340"></svg>
-            </div>
-          </div>
-        </section>
-
-        <div class="disclaimer">
-          <b>Important note:</b> This is a field epidemiology decision-support tool. Case definitions, population at risk, incubation period, epidemiological links, and denominators must be determined from the actual outbreak investigation and current Ministry of Health guidance. This calculator does not replace professional epidemiological assessment.
-        </div>
-
-        <footer>
-          ZAP! Outbreak Calculator · GitHub Pages ready
-        </footer>
-      </div>
-    </section>
-  </main>
-
-  <script src="script.js"></script>
-</body>
-</html>
+<div class="notice"><b>Important:</b> This tool supports field epidemiology workflows. It does not establish causality or replace case definitions, disease-specific incubation periods, laboratory findings, environmental assessment, or professional outbreak investigation. Interpret results in the context of current Ministry of Health guidance.</div>
+<footer>ZAP! Outbreak Investigator · V3 Professional Edition</footer>
+</main>
+<script src="script.js"></script>
+</body></html>

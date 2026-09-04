@@ -1,38 +1,35 @@
-# Outbreak Calculator 
+# ZAP! Outbreak Investigator — V3 Professional Edition
 
-A GitHub Pages-ready field epidemiology calculator.
+A static, GitHub Pages-ready field epidemiology decision-support application.
 
-## Included
-- Overall Attack Rate
-- Secondary Attack Rate
-- Case Fatality Rate (CFR)
-- 2 × 2 exposure table: Exposed / Not exposed × Ill / Not ill
-- Risk Ratio (RR)
-- 95% confidence interval for RR
-- Pearson chi-square p-value
-- Epidemic curve from symptom onset dates
-- Automatic interpretation
-- Demo dataset
-- Reset button
-- Mobile-friendly interface
+## V3 features
+- Professional navy/teal public-health dashboard
+- Outbreak profile and denominator QC
+- Attack Rate, CFR, Secondary Attack Rate, hospitalisation proportion
+- CSV line-list upload processed locally in the browser
+- Automatic detection of common age, sex, locality and onset-date columns
+- Person–Place–Time summary
+- Epidemic curve
+- Multiple candidate exposure analysis
+- Attack rates among exposed/unexposed
+- Risk Ratio, 95% CI and Pearson chi-square p-value
+- Automated epidemiological narrative
+- Copy summary
+- Print / Save PDF using the browser
 
-## Deploy / replace your current GitHub Pages version
-
-Upload these three files to the root of your existing repository and replace the old versions:
+## Deploy to your existing GitHub Pages repository
+Replace the old files in the repository root with:
 - index.html
 - style.css
 - script.js
+- README.md
 
-Commit the changes. GitHub Pages will redeploy automatically.
+Commit changes. GitHub Pages should redeploy automatically.
 
-## Demo
-Click LOAD DEMO. Expected key outputs:
-- Attack Rate: 14.0%
-- Secondary Attack Rate: 16.0%
-- CFR: about 2.9%
-- Attack Rate Exposed: 40.0%
-- Attack Rate Unexposed: 10.0%
-- Risk Ratio: 4.00
+## Suggested CSV columns
+case_id, age, sex, locality, date_onset, hospitalised, outcome
 
-## Epidemiological note
-For the Secondary Attack Rate, the user directly enters the number of susceptible contacts at the start of the relevant observation period. The correct denominator depends on the outbreak context and case/contact definitions.
+Use YYYY-MM-DD for date_onset.
+
+## Important
+This application is decision support, not a substitute for professional outbreak investigation. Analytical associations do not by themselves establish causality.
