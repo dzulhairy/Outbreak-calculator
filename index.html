@@ -4,91 +4,99 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b1f33">
-<title> Field Outbreak Investigator </title>
-<link rel="stylesheet" href="style.css">
+<title>Field Outbreak Investigator V1.1</title>
+<link rel="stylesheet" href="style.css?v=1.1">
 </head>
 <body>
 <header class="topbar">
-  <div class="brand">
-    <div class="mark">Z!</div>
-    <div><b> OUTBREAK INVESTIGATOR</b><span>Field Epidemiology Decision Support</span></div>
-  </div>
-  <div class="version">V1</div>
+  <div class="brand"><div class="mark">Z!</div><div><b>OUTBREAK INVESTIGATOR</b><span>Field Epidemiology Decision Support</span></div></div>
+  <div class="version">V1.1</div>
 </header>
 
 <main class="shell">
 <section class="hero">
-  <div>
-    <div class="eyebrow">OUTBREAK INTELLIGENCE WORKSPACE</div>
-    <h1>From linelisting to<br><span>epidemiological insight.</span></h1>
-    <p>Rapid descriptive and analytical outbreak assessment with person–place–time summaries, epidemic curves, exposure analysis and exportable findings.</p>
-  </div>
-  <div class="hero-card">
-    <div class="status-dot"></div>
-    <b>Analysis runs locally in your browser</b>
-    <small>Uploaded CSV data are processed on your device by this page.</small>
-  </div>
+  <div><div class="eyebrow">OUTBREAK INTELLIGENCE WORKSPACE</div>
+  <h1>From line listing to<br><span>epidemiological insight.</span></h1>
+  <p>Rapid descriptive and analytical outbreak assessment with person–place–time summaries, epidemic curves, exposure analysis and outbreak closure monitoring.</p></div>
+  <div class="hero-card"><div class="status-dot"></div><b>Analysis runs locally in your browser</b><small>Uploaded CSV data are processed on your device by this page.</small></div>
 </section>
 
-<nav class="tabs">
-  <a href="#profile">Overview</a><a href="#linelist">Line List</a><a href="#ppt">Person · Place · Time</a><a href="#exposure">Analytical Epi</a><a href="#report">Report</a>
-</nav>
+<nav class="tabs"><a href="#profile">Overview</a><a href="#linelist">Line List</a><a href="#ppt">Person · Place · Time</a><a href="#exposure">Analytical Epi</a><a href="#report">Report</a></nav>
 
 <section id="profile" class="card">
-  <div class="section-head"><div><span>01</span><h2>Outbreak Profile</h2></div><p>Define the investigation denominator and core severity indicators.</p></div>
-  <div class="form-grid">
-    <label>Outbreak name<input id="outbreakName" placeholder="e.g. Acute gastroenteritis outbreak"></label>
-    <label>Disease / syndrome<input id="disease" placeholder="e.g. Acute gastroenteritis"></label>
-    <label>Location<input id="location" placeholder="e.g. District / institution"></label>
-    <label>Investigation date<input id="investigationDate" type="date"></label>
-    <label>Population at risk<input id="population" type="number" min="0" placeholder="250"></label>
-    <label>Total cases<input id="cases" type="number" min="0" placeholder="35"></label>
-    <label>Hospitalised<input id="hospitalised" type="number" min="0" placeholder="4"></label>
-    <label>Deaths<input id="deaths" type="number" min="0" placeholder="1"></label>
-    <label>Susceptible contacts at start<input id="contacts" type="number" min="0" placeholder="75"></label>
-    <label>Secondary cases<input id="secondary" type="number" min="0" placeholder="12"></label>
-  </div>
-  <div class="actions"><button class="primary" id="calcOverview">Calculate overview</button><button id="demo">Load demo</button><button class="subtle" id="reset">Reset</button></div>
-  <div id="qc" class="qc"></div>
+ <div class="section-head"><div><span>01</span><h2>Outbreak Profile</h2></div><p>Define the investigation denominator and core severity indicators.</p></div>
+ <div class="form-grid">
+  <label>Outbreak name<input id="outbreakName" placeholder="e.g. Acute gastroenteritis outbreak"></label>
+  <label>Disease / syndrome<input id="disease" placeholder="e.g. Acute gastroenteritis"></label>
+  <label>Location<input id="location" placeholder="e.g. District / institution"></label>
+  <label>Investigation date<input id="investigationDate" type="date"></label>
+  <label>Population at risk<input id="population" type="number" min="0" placeholder="250"></label>
+  <label>Total cases<input id="cases" type="number" min="0" placeholder="35"></label>
+  <label>Hospitalised<input id="hospitalised" type="number" min="0" placeholder="4"></label>
+  <label>Deaths<input id="deaths" type="number" min="0" placeholder="1"></label>
+  <label>Susceptible contacts at start<input id="contacts" type="number" min="0" placeholder="75"></label>
+  <label>Secondary cases<input id="secondary" type="number" min="0" placeholder="12"></label>
+ </div>
+ <div class="actions"><button class="primary" id="calcOverview">Calculate overview</button><button id="demo">Load demo</button><button class="subtle" id="reset">Reset</button></div>
+ <div id="qc" class="qc"></div>
 </section>
 
 <section class="kpis">
-  <article><span>Total cases</span><b id="kCases">—</b><small id="kCasesSub">Outbreak size</small></article>
-  <article><span>Attack rate</span><b id="kAR">—</b><small id="kARSub">Cases / population at risk</small></article>
-  <article><span>CFR</span><b id="kCFR">—</b><small>Deaths / cases</small></article>
-  <article><span>Secondary AR</span><b id="kSAR">—</b><small>Secondary cases / susceptible contacts</small></article>
-  <article><span>Hospitalised</span><b id="kHosp">—</b><small id="kHospSub">Proportion of cases</small></article>
+ <article><span>Total cases</span><b id="kCases">—</b><small>Outbreak size</small></article>
+ <article><span>Attack rate</span><b id="kAR">—</b><small>Cases / population at risk</small></article>
+ <article><span>CFR</span><b id="kCFR">—</b><small>Deaths / cases</small></article>
+ <article><span>Secondary AR</span><b id="kSAR">—</b><small>Secondary cases / susceptible contacts</small></article>
+ <article><span>Hospitalised</span><b id="kHosp">—</b><small>Proportion of cases</small></article>
 </section>
 
 <section id="linelist" class="card">
  <div class="section-head"><div><span>02</span><h2>Line List Analyzer</h2></div><p>Upload a CSV for automated descriptive epidemiology.</p></div>
- <div class="upload">
-   <input type="file" id="csvFile" accept=".csv,text/csv">
-   <div><b>Upload CSV line list</b><small>Recommended columns: case_id, age, sex, locality, date_onset, hospitalised, outcome</small></div>
- </div>
- <div id="mapping" class="mapping hidden"></div>
+ <div class="upload"><input type="file" id="csvFile" accept=".csv,text/csv"><div><b>Upload CSV line list</b><small>Recommended columns: case_id, age, sex, locality, date_onset, hospitalised, outcome</small></div></div>
  <div id="lineSummary" class="summary-box">No line list loaded. Manual onset dates can still be entered below.</div>
 </section>
 
 <section id="ppt" class="split">
  <div class="card">
   <div class="section-head"><div><span>03</span><h2>Person · Place · Time</h2></div></div>
-  <div class="mini-kpis">
-   <div><span>Median age</span><b id="medianAge">—</b></div>
-   <div><span>Male</span><b id="malePct">—</b></div>
-   <div><span>Peak onset</span><b id="peakDate">—</b></div>
-   <div><span>Outbreak span</span><b id="spanDays">—</b></div>
-  </div>
+  <div class="mini-kpis"><div><span>Median age</span><b id="medianAge">—</b></div><div><span>Male</span><b id="malePct">—</b></div><div><span>Peak onset</span><b id="peakDate">—</b></div><div><span>Outbreak span</span><b id="spanDays">—</b></div></div>
   <label class="block">Symptom onset dates <small>One date per case; YYYY-MM-DD</small><textarea id="dates" rows="8" placeholder="2026-09-01&#10;2026-09-01&#10;2026-09-02"></textarea></label>
  </div>
  <div class="card">
-   <div class="chart-title"><div><h2>Epidemic Curve</h2><small id="curveMeta">No onset data</small></div><button id="drawCurve">Update curve</button></div>
-   <div class="chart-scroll"><svg id="epi" viewBox="0 0 900 390"></svg></div>
+  <div class="chart-title"><div><h2>Epidemic Curve & Outbreak Timeline</h2><small id="curveMeta">No onset data</small></div><button id="drawCurve">Update curve</button></div>
+  <div class="chart-scroll"><svg id="epi" viewBox="0 0 1000 430"></svg></div>
  </div>
 </section>
 
+<section class="card closure-card">
+ <div class="section-head"><div><span>04</span><h2>Outbreak Closure Monitor</h2></div><p>Track the last case and the disease-specific case-free observation window.</p></div>
+ <div class="closure-grid">
+  <label>Index case onset<input id="indexOnset" type="date"><small>Auto-detected from earliest onset; editable.</small></label>
+  <label>Last case onset<input id="lastOnset" type="date"><small>Auto-detected from latest onset; editable.</small></label>
+  <label>Maximum incubation period (days)<input id="maxIncubation" type="number" min="1" placeholder="e.g. 21"><small>Enter from the applicable disease guideline.</small></label>
+  <label>Closure rule
+   <select id="closureMultiplier">
+    <option value="2">2 × maximum incubation period</option>
+    <option value="1">1 × maximum incubation period</option>
+    <option value="custom">Custom case-free period</option>
+   </select>
+  </label>
+  <label id="customWrap" class="hidden">Custom case-free period (days)<input id="customDays" type="number" min="1" placeholder="e.g. 14"></label>
+  <label>Review date / today<input id="reviewDate" type="date"><small>Used to calculate days since last case.</small></label>
+ </div>
+ <div class="actions"><button class="primary" id="updateClosure">Update closure monitor</button></div>
+ <div class="closure-kpis">
+  <article><span>Index case</span><b id="cIndex">—</b></article>
+  <article><span>Last case</span><b id="cLast">—</b></article>
+  <article><span>Case-free period required</span><b id="cWindow">—</b></article>
+  <article><span>Projected closure review</span><b id="cProjected">—</b></article>
+  <article><span>Days since last case</span><b id="cSince">—</b></article>
+ </div>
+ <div id="closureStatus" class="closure-status neutral"><b>Closure status unavailable.</b><span>Enter a last-case onset date and the disease-specific observation rule.</span></div>
+ <div class="method-note"><b>Interpretation:</b> “Eligible for closure review” is a decision-support flag, not an automatic declaration that the outbreak has ended. Apply the current disease-specific MOH guideline and local/state authority decision.</div>
+</section>
+
 <section id="exposure" class="card">
- <div class="section-head"><div><span>04</span><h2>Multiple Exposure Analyzer</h2></div><p>Compare candidate exposures using attack rates and risk ratios.</p></div>
+ <div class="section-head"><div><span>05</span><h2>Multiple Exposure Analyzer</h2></div><p>Compare candidate exposures using attack rates and risk ratios.</p></div>
  <div class="exposure-entry">
   <input id="expName" placeholder="Exposure name (e.g. Chicken curry)">
   <input id="a" type="number" min="0" placeholder="Exposed + ill (a)">
@@ -97,20 +105,18 @@
   <input id="d" type="number" min="0" placeholder="Unexposed + not ill (d)">
   <button class="primary" id="addExposure">Add exposure</button>
  </div>
- <div class="table-scroll">
- <table><thead><tr><th>Exposure</th><th>AR exposed</th><th>AR unexposed</th><th>RR</th><th>95% CI</th><th>p-value</th><th></th></tr></thead><tbody id="expBody"><tr><td colspan="7" class="empty">No exposures added.</td></tr></tbody></table>
- </div>
+ <div class="table-scroll"><table><thead><tr><th>Exposure</th><th>AR exposed</th><th>AR unexposed</th><th>RR</th><th>95% CI</th><th>p-value</th><th></th></tr></thead><tbody id="expBody"><tr><td colspan="7" class="empty">No exposures added.</td></tr></tbody></table></div>
  <div id="topExposure" class="insight">Add one or more candidate exposures to generate an analytical summary.</div>
 </section>
 
 <section id="report" class="card">
- <div class="section-head"><div><span>05</span><h2>Automated Epidemiological Summary</h2></div><p>Generate a concise, editable investigation summary from the entered data.</p></div>
+ <div class="section-head"><div><span>06</span><h2>Automated Epidemiological Summary</h2></div><p>Generate a concise investigation summary including closure-monitoring status.</p></div>
  <div id="reportText" class="report-text">Complete the outbreak profile and analyses, then generate the summary.</div>
  <div class="actions"><button class="primary" id="generateReport">Generate summary</button><button id="copyReport">Copy summary</button><button id="printReport">Print / Save PDF</button></div>
 </section>
 
-<div class="notice"><b>Important:</b> This tool supports field epidemiology workflows. It does not establish causality or replace case definitions, disease-specific incubation periods, laboratory findings, environmental assessment, or professional outbreak investigation. Interpret results in the context of current Ministry of Health guidance.</div>
-<footer> Outbreak Investigator · V1 /footer>
+<div class="notice"><b>Important:</b> This tool supports field epidemiology workflows. Disease-specific incubation periods and outbreak closure criteria are not universal. Confirm the applicable current Ministry of Health guideline before declaring an outbreak over.</div>
+<footer>Field Outbreak Investigator · V1.1</footer>
 </main>
-<script src="script.js"></script>
+<script src="script.js?v=1.1"></script>
 </body></html>
