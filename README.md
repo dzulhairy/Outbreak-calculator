@@ -1,4 +1,4 @@
-# ZAP! Outbreak Calculator
+# Outbreak Calculator
 
 GitHub Pages-ready field epidemiology calculator.
 
