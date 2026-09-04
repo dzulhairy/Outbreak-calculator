@@ -1,17 +1,15 @@
-# Field Outbreak Investigator V1.1
+# Field Outbreak Investigator V1.2
 
-Upgrade focused on epidemic-review and outbreak-closure monitoring.
+Malaysia-focused outbreak-monitoring upgrade.
 
-New:
-- Index case onset marker
-- Last case onset marker
-- Review-date marker
-- Maximum incubation period input
-- Selectable 1× / 2× incubation-period rule or custom case-free period
-- Projected closure-review date
-- Days since last case
-- Monitoring vs Eligible for closure review status
-- Closure markers integrated into epidemic curve
-- Automated report includes closure-monitoring status
+## Auto-calculated MOH Malaysia timing rules in V1.2
+- Typhoid / Paratyphoid: 42 days from last-case onset.
+- Hepatitis A: 56 days from last-case onset.
+- Chikungunya: 14 days from last-case onset.
+- Dengue: 14-day operational monitoring window, explicitly labelled operational rather than universal formal closure.
+- MERS-CoV: 28-day historical MOH Malaysia monitoring precedent.
+- Dysentery: MOH specifies 2 incubation periods of the causative organism; user enters the agent-specific number of days.
 
-Important: closure criteria are disease-specific. The tool deliberately does not hard-code one universal MOH rule.
+Common diseases without a verified explicit closure timing statement remain selectable but use manual mode.
+
+Formal outbreak closure remains subject to the applicable current MOH/JKN/PKD requirement and completion of non-timing criteria.

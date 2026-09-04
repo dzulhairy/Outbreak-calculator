@@ -4,119 +4,66 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b1f33">
-<title>Field Outbreak Investigator V1.1</title>
-<link rel="stylesheet" href="style.css?v=1.1">
+<title>Field Outbreak Investigator V1.2</title>
+<link rel="stylesheet" href="style.css?v=1.2">
 </head>
 <body>
 <header class="topbar">
   <div class="brand"><div class="mark">Z!</div><div><b>OUTBREAK INVESTIGATOR</b><span>Field Epidemiology Decision Support</span></div></div>
-  <div class="version">V1.1</div>
+  <div class="version">V1.2</div>
 </header>
-
 <main class="shell">
 <section class="hero">
-  <div><div class="eyebrow">OUTBREAK INTELLIGENCE WORKSPACE</div>
-  <h1>From line listing to<br><span>epidemiological insight.</span></h1>
-  <p>Rapid descriptive and analytical outbreak assessment with person–place–time summaries, epidemic curves, exposure analysis and outbreak closure monitoring.</p></div>
-  <div class="hero-card"><div class="status-dot"></div><b>Analysis runs locally in your browser</b><small>Uploaded CSV data are processed on your device by this page.</small></div>
+  <div><div class="eyebrow">OUTBREAK INTELLIGENCE WORKSPACE</div><h1>From line listing to<br><span>epidemiological insight.</span></h1><p>Rapid descriptive and analytical outbreak assessment with a Malaysia-focused disease rule library for outbreak monitoring.</p></div>
+  <div class="hero-card"><div class="status-dot"></div><b>Analysis runs locally in your browser</b><small>Uploaded CSV data are processed on your device.</small></div>
 </section>
-
-<nav class="tabs"><a href="#profile">Overview</a><a href="#linelist">Line List</a><a href="#ppt">Person · Place · Time</a><a href="#exposure">Analytical Epi</a><a href="#report">Report</a></nav>
+<nav class="tabs"><a href="#profile">Overview</a><a href="#linelist">Line List</a><a href="#ppt">Person · Place · Time</a><a href="#closure">Closure Monitor</a><a href="#exposure">Analytical Epi</a><a href="#report">Report</a></nav>
 
 <section id="profile" class="card">
- <div class="section-head"><div><span>01</span><h2>Outbreak Profile</h2></div><p>Define the investigation denominator and core severity indicators.</p></div>
+ <div class="section-head"><div><span>01</span><h2>Outbreak Profile</h2></div><p>Define the investigation denominator and disease.</p></div>
  <div class="form-grid">
-  <label>Outbreak name<input id="outbreakName" placeholder="e.g. Acute gastroenteritis outbreak"></label>
-  <label>Disease / syndrome<input id="disease" placeholder="e.g. Acute gastroenteritis"></label>
+  <label>Outbreak name<input id="outbreakName" placeholder="e.g. Typhoid outbreak"></label>
+  <label>Disease / syndrome<select id="disease">
+   <option value="">Select disease / syndrome</option>
+   <optgroup label="MOH Malaysia rule library">
+    <option value="typhoid">Typhoid / Paratyphoid</option><option value="hepatitis_a">Hepatitis A</option><option value="dysentery">Dysentery</option><option value="chikungunya">Chikungunya</option><option value="dengue">Dengue</option><option value="mers">MERS-CoV</option>
+   </optgroup>
+   <optgroup label="Common diseases — manual closure verification">
+    <option value="measles">Measles</option><option value="hfmd">HFMD</option><option value="pertussis">Pertussis</option><option value="mumps">Mumps</option><option value="rubella">Rubella</option><option value="varicella">Chickenpox / Varicella</option><option value="cholera">Cholera</option><option value="food_poisoning">Food Poisoning / AGE</option><option value="leptospirosis">Leptospirosis</option><option value="malaria">Malaria</option><option value="influenza">Influenza / ILI</option><option value="covid19">COVID-19</option><option value="mpox">Mpox</option><option value="nipah">Nipah Virus Infection</option>
+   </optgroup><option value="other">Other / Unknown</option>
+  </select></label>
   <label>Location<input id="location" placeholder="e.g. District / institution"></label>
   <label>Investigation date<input id="investigationDate" type="date"></label>
-  <label>Population at risk<input id="population" type="number" min="0" placeholder="250"></label>
-  <label>Total cases<input id="cases" type="number" min="0" placeholder="35"></label>
-  <label>Hospitalised<input id="hospitalised" type="number" min="0" placeholder="4"></label>
-  <label>Deaths<input id="deaths" type="number" min="0" placeholder="1"></label>
-  <label>Susceptible contacts at start<input id="contacts" type="number" min="0" placeholder="75"></label>
-  <label>Secondary cases<input id="secondary" type="number" min="0" placeholder="12"></label>
+  <label>Population at risk<input id="population" type="number" min="0"></label>
+  <label>Total cases<input id="cases" type="number" min="0"></label>
+  <label>Hospitalised<input id="hospitalised" type="number" min="0"></label>
+  <label>Deaths<input id="deaths" type="number" min="0"></label>
+  <label>Susceptible contacts at start<input id="contacts" type="number" min="0"></label>
+  <label>Secondary cases<input id="secondary" type="number" min="0"></label>
  </div>
  <div class="actions"><button class="primary" id="calcOverview">Calculate overview</button><button id="demo">Load demo</button><button class="subtle" id="reset">Reset</button></div>
  <div id="qc" class="qc"></div>
+ <div id="diseaseRuleCard" class="disease-rule neutral"><div><span class="rule-badge">MALAYSIA RULE LIBRARY</span><b id="ruleTitle">Select a disease to load the outbreak-monitoring rule.</b><p id="ruleText">Only timing criteria verified from official Ministry of Health Malaysia material are auto-calculated.</p></div><div class="rule-meta"><span id="ruleVerification">Not selected</span><a id="ruleSource" href="#" target="_blank" rel="noopener" class="hidden">Open MOH source ↗</a></div></div>
 </section>
 
-<section class="kpis">
- <article><span>Total cases</span><b id="kCases">—</b><small>Outbreak size</small></article>
- <article><span>Attack rate</span><b id="kAR">—</b><small>Cases / population at risk</small></article>
- <article><span>CFR</span><b id="kCFR">—</b><small>Deaths / cases</small></article>
- <article><span>Secondary AR</span><b id="kSAR">—</b><small>Secondary cases / susceptible contacts</small></article>
- <article><span>Hospitalised</span><b id="kHosp">—</b><small>Proportion of cases</small></article>
-</section>
+<section class="kpis"><article><span>Total cases</span><b id="kCases">—</b><small>Outbreak size</small></article><article><span>Attack rate</span><b id="kAR">—</b><small>Cases / population at risk</small></article><article><span>CFR</span><b id="kCFR">—</b><small>Deaths / cases</small></article><article><span>Secondary AR</span><b id="kSAR">—</b><small>Secondary cases / susceptible contacts</small></article><article><span>Hospitalised</span><b id="kHosp">—</b><small>Proportion of cases</small></article></section>
 
-<section id="linelist" class="card">
- <div class="section-head"><div><span>02</span><h2>Line List Analyzer</h2></div><p>Upload a CSV for automated descriptive epidemiology.</p></div>
- <div class="upload"><input type="file" id="csvFile" accept=".csv,text/csv"><div><b>Upload CSV line list</b><small>Recommended columns: case_id, age, sex, locality, date_onset, hospitalised, outcome</small></div></div>
- <div id="lineSummary" class="summary-box">No line list loaded. Manual onset dates can still be entered below.</div>
-</section>
+<section id="linelist" class="card"><div class="section-head"><div><span>02</span><h2>Line List Analyzer</h2></div><p>Upload a CSV for automated descriptive epidemiology.</p></div><div class="upload"><input type="file" id="csvFile" accept=".csv,text/csv"><div><b>Upload CSV line list</b><small>Recommended columns: case_id, age, sex, locality, date_onset, hospitalised, outcome</small></div></div><div id="lineSummary" class="summary-box">No line list loaded. Manual onset dates can still be entered below.</div></section>
 
-<section id="ppt" class="split">
- <div class="card">
-  <div class="section-head"><div><span>03</span><h2>Person · Place · Time</h2></div></div>
-  <div class="mini-kpis"><div><span>Median age</span><b id="medianAge">—</b></div><div><span>Male</span><b id="malePct">—</b></div><div><span>Peak onset</span><b id="peakDate">—</b></div><div><span>Outbreak span</span><b id="spanDays">—</b></div></div>
-  <label class="block">Symptom onset dates <small>One date per case; YYYY-MM-DD</small><textarea id="dates" rows="8" placeholder="2026-09-01&#10;2026-09-01&#10;2026-09-02"></textarea></label>
- </div>
- <div class="card">
-  <div class="chart-title"><div><h2>Epidemic Curve & Outbreak Timeline</h2><small id="curveMeta">No onset data</small></div><button id="drawCurve">Update curve</button></div>
-  <div class="chart-scroll"><svg id="epi" viewBox="0 0 1000 430"></svg></div>
- </div>
-</section>
+<section id="ppt" class="split"><div class="card"><div class="section-head"><div><span>03</span><h2>Person · Place · Time</h2></div></div><div class="mini-kpis"><div><span>Median age</span><b id="medianAge">—</b></div><div><span>Male</span><b id="malePct">—</b></div><div><span>Peak onset</span><b id="peakDate">—</b></div><div><span>Outbreak span</span><b id="spanDays">—</b></div></div><label class="block">Symptom onset dates <small>One date per case; YYYY-MM-DD</small><textarea id="dates" rows="8"></textarea></label></div><div class="card"><div class="chart-title"><div><h2>Epidemic Curve & Outbreak Timeline</h2><small id="curveMeta">No onset data</small></div><button id="drawCurve">Update curve</button></div><div class="chart-scroll"><svg id="epi" viewBox="0 0 1000 430"></svg></div></div></section>
 
-<section class="card closure-card">
- <div class="section-head"><div><span>04</span><h2>Outbreak Closure Monitor</h2></div><p>Track the last case and the disease-specific case-free observation window.</p></div>
- <div class="closure-grid">
-  <label>Index case onset<input id="indexOnset" type="date"><small>Auto-detected from earliest onset; editable.</small></label>
-  <label>Last case onset<input id="lastOnset" type="date"><small>Auto-detected from latest onset; editable.</small></label>
-  <label>Maximum incubation period (days)<input id="maxIncubation" type="number" min="1" placeholder="e.g. 21"><small>Enter from the applicable disease guideline.</small></label>
-  <label>Closure rule
-   <select id="closureMultiplier">
-    <option value="2">2 × maximum incubation period</option>
-    <option value="1">1 × maximum incubation period</option>
-    <option value="custom">Custom case-free period</option>
-   </select>
-  </label>
-  <label id="customWrap" class="hidden">Custom case-free period (days)<input id="customDays" type="number" min="1" placeholder="e.g. 14"></label>
-  <label>Review date / today<input id="reviewDate" type="date"><small>Used to calculate days since last case.</small></label>
- </div>
+<section id="closure" class="card closure-card"><div class="section-head"><div><span>04</span><h2>Outbreak Closure Monitor</h2></div><p>Disease-specific timing logic from the Malaysia rule library.</p></div>
+ <div class="closure-grid"><label>Index case onset<input id="indexOnset" type="date"><small>Auto-detected from earliest onset.</small></label><label>Second case onset<input id="secondOnset" type="date"><small>Auto-detected where available.</small></label><label>Last case onset<input id="lastOnset" type="date"><small>Auto-detected from latest onset.</small></label><label>Rule basis<input id="ruleBasis" readonly placeholder="Select disease"><small>Loaded from the disease rule library.</small></label><label>Required case-free / monitoring period (days)<input id="requiredDays" type="number" min="1" placeholder="Manual if not verified"><small>Locked for verified fixed-day rules.</small></label><label>Review date / today<input id="reviewDate" type="date"><small>Used to calculate current monitoring status.</small></label></div>
  <div class="actions"><button class="primary" id="updateClosure">Update closure monitor</button></div>
- <div class="closure-kpis">
-  <article><span>Index case</span><b id="cIndex">—</b></article>
-  <article><span>Last case</span><b id="cLast">—</b></article>
-  <article><span>Case-free period required</span><b id="cWindow">—</b></article>
-  <article><span>Projected closure review</span><b id="cProjected">—</b></article>
-  <article><span>Days since last case</span><b id="cSince">—</b></article>
- </div>
- <div id="closureStatus" class="closure-status neutral"><b>Closure status unavailable.</b><span>Enter a last-case onset date and the disease-specific observation rule.</span></div>
- <div class="method-note"><b>Interpretation:</b> “Eligible for closure review” is a decision-support flag, not an automatic declaration that the outbreak has ended. Apply the current disease-specific MOH guideline and local/state authority decision.</div>
+ <div class="closure-kpis"><article><span>Index case</span><b id="cIndex">—</b></article><article><span>Last case</span><b id="cLast">—</b></article><article><span>Required period</span><b id="cWindow">—</b></article><article><span>Projected review</span><b id="cProjected">—</b></article><article><span>Days since anchor</span><b id="cSince">—</b></article></div>
+ <div id="closureStatus" class="closure-status neutral"><b>Closure status unavailable.</b><span>Select a disease and enter onset dates.</span></div>
+ <div class="method-note"><b>Interpretation:</b> A timing threshold does not by itself formally close an outbreak. Confirm case classification, laboratory/environmental findings, control measures and the current MOH/JKN/PKD requirement before formal closure.</div>
 </section>
 
-<section id="exposure" class="card">
- <div class="section-head"><div><span>05</span><h2>Multiple Exposure Analyzer</h2></div><p>Compare candidate exposures using attack rates and risk ratios.</p></div>
- <div class="exposure-entry">
-  <input id="expName" placeholder="Exposure name (e.g. Chicken curry)">
-  <input id="a" type="number" min="0" placeholder="Exposed + ill (a)">
-  <input id="b" type="number" min="0" placeholder="Exposed + not ill (b)">
-  <input id="c" type="number" min="0" placeholder="Unexposed + ill (c)">
-  <input id="d" type="number" min="0" placeholder="Unexposed + not ill (d)">
-  <button class="primary" id="addExposure">Add exposure</button>
- </div>
- <div class="table-scroll"><table><thead><tr><th>Exposure</th><th>AR exposed</th><th>AR unexposed</th><th>RR</th><th>95% CI</th><th>p-value</th><th></th></tr></thead><tbody id="expBody"><tr><td colspan="7" class="empty">No exposures added.</td></tr></tbody></table></div>
- <div id="topExposure" class="insight">Add one or more candidate exposures to generate an analytical summary.</div>
-</section>
+<section id="exposure" class="card"><div class="section-head"><div><span>05</span><h2>Multiple Exposure Analyzer</h2></div><p>Compare candidate exposures using attack rates and risk ratios.</p></div><div class="exposure-entry"><input id="expName" placeholder="Exposure name"><input id="a" type="number" min="0" placeholder="Exposed + ill (a)"><input id="b" type="number" min="0" placeholder="Exposed + not ill (b)"><input id="c" type="number" min="0" placeholder="Unexposed + ill (c)"><input id="d" type="number" min="0" placeholder="Unexposed + not ill (d)"><button class="primary" id="addExposure">Add exposure</button></div><div class="table-scroll"><table><thead><tr><th>Exposure</th><th>AR exposed</th><th>AR unexposed</th><th>RR</th><th>95% CI</th><th>p-value</th><th></th></tr></thead><tbody id="expBody"><tr><td colspan="7" class="empty">No exposures added.</td></tr></tbody></table></div><div id="topExposure" class="insight">Add one or more candidate exposures to generate an analytical summary.</div></section>
 
-<section id="report" class="card">
- <div class="section-head"><div><span>06</span><h2>Automated Epidemiological Summary</h2></div><p>Generate a concise investigation summary including closure-monitoring status.</p></div>
- <div id="reportText" class="report-text">Complete the outbreak profile and analyses, then generate the summary.</div>
- <div class="actions"><button class="primary" id="generateReport">Generate summary</button><button id="copyReport">Copy summary</button><button id="printReport">Print / Save PDF</button></div>
-</section>
-
-<div class="notice"><b>Important:</b> This tool supports field epidemiology workflows. Disease-specific incubation periods and outbreak closure criteria are not universal. Confirm the applicable current Ministry of Health guideline before declaring an outbreak over.</div>
-<footer>Field Outbreak Investigator · V1.1</footer>
+<section id="report" class="card"><div class="section-head"><div><span>06</span><h2>Automated Epidemiological Summary</h2></div><p>Generate a concise investigation summary.</p></div><div id="reportText" class="report-text">Complete the outbreak profile and analyses, then generate the summary.</div><div class="actions"><button class="primary" id="generateReport">Generate summary</button><button id="copyReport">Copy summary</button><button id="printReport">Print / Save PDF</button></div></section>
+<div class="notice"><b>Important:</b> V1.2 auto-calculates only rules verified from official MOH Malaysia material. Diseases without a verified explicit timing criterion remain manual.</div><footer>Field Outbreak Investigator · V1.2</footer>
 </main>
-<script src="script.js?v=1.1"></script>
+<script src="script.js?v=1.2"></script>
 </body></html>
