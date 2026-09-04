@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#159bd7">
+  <meta name="description" content="ZAP! Outbreak Calculator - kalkulator epidemiologi lapangan untuk outbreak investigation.">
+  <title>ZAP! Outbreak Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <section class="app-card">
+      <header class="hero">
+        <div class="kicker">FIELD EPIDEMIOLOGY TOOL</div>
+        <h1>ZAP! OUTBREAK</h1>
+        <p>Kalkulator Siasatan Wabak</p>
+      </header>
+
+      <div class="content">
+        <section class="panel">
+          <div class="section-title"><span>1</span> Data asas wabak</div>
+          <div class="grid two">
+            <label>
+              <span>Populasi berisiko</span>
+              <input id="population" type="number" min="0" step="1" inputmode="numeric" placeholder="Contoh: 250">
+            </label>
+            <label>
+              <span>Jumlah kes</span>
+              <input id="cases" type="number" min="0" step="1" inputmode="numeric" placeholder="Contoh: 35">
+            </label>
+            <label>
+              <span>Jumlah kematian</span>
+              <input id="deaths" type="number" min="0" step="1" inputmode="numeric" placeholder="Contoh: 1">
+            </label>
+            <label>
+              <span>Kontak rentan pada permulaan</span>
+              <input id="susceptibleContacts" type="number" min="0" step="1" inputmode="numeric" placeholder="Contoh: 75">
+              <small>Denominator untuk Secondary Attack Rate.</small>
+            </label>
+            <label>
+              <span>Kes sekunder</span>
+              <input id="secondaryCases" type="number" min="0" step="1" inputmode="numeric" placeholder="Contoh: 12">
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title"><span>2</span> Jadual 2 × 2 pendedahan</div>
+
+          <div class="table-wrap">
+            <table class="two-by-two" aria-label="Jadual dua kali dua pendedahan dan penyakit">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Sakit</th>
+                  <th>Tidak sakit</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>Terpajan</th>
+                  <td><input id="a" type="number" min="0" step="1" inputmode="numeric" aria-label="Terpajan dan sakit"></td>
+                  <td><input id="b" type="number" min="0" step="1" inputmode="numeric" aria-label="Terpajan dan tidak sakit"></td>
+                </tr>
+                <tr>
+                  <th>Tidak terpajan</th>
+                  <td><input id="c" type="number" min="0" step="1" inputmode="numeric" aria-label="Tidak terpajan dan sakit"></td>
+                  <td><input id="d" type="number" min="0" step="1" inputmode="numeric" aria-label="Tidak terpajan dan tidak sakit"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="formula-hint">
+            <b>RR</b> = [a/(a+b)] ÷ [c/(c+d)]
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title"><span>3</span> Tarikh onset untuk epidemic curve</div>
+          <label>
+            <span>Satu tarikh bagi setiap kes</span>
+            <textarea id="onsetDates" rows="8" placeholder="2026-09-01&#10;2026-09-01&#10;2026-09-02"></textarea>
+            <small>Format terbaik: YYYY-MM-DD. Satu tarikh = satu kes.</small>
+          </label>
+        </section>
+
+        <div class="actions">
+          <button class="btn primary" id="calculateBtn" type="button">KIRA WABAK ⚡</button>
+          <button class="btn secondary" id="demoBtn" type="button">LOAD DEMO</button>
+          <button class="btn ghost" id="resetBtn" type="button">RESET</button>
+        </div>
+
+        <section class="panel results-panel" id="resultsPanel">
+          <div class="section-title"><span>✓</span> Keputusan</div>
+
+          <div class="metrics">
+            <article class="metric">
+              <div class="metric-label">Attack Rate</div>
+              <div class="metric-value" id="attackRate">—</div>
+              <div class="metric-detail" id="attackDetail">—</div>
+            </article>
+            <article class="metric">
+              <div class="metric-label">Secondary Attack Rate</div>
+              <div class="metric-value" id="secondaryAttackRate">—</div>
+              <div class="metric-detail" id="secondaryDetail">—</div>
+            </article>
+            <article class="metric">
+              <div class="metric-label">Case Fatality Rate</div>
+              <div class="metric-value" id="cfr">—</div>
+              <div class="metric-detail" id="cfrDetail">—</div>
+            </article>
+            <article class="metric">
+              <div class="metric-label">AR Terpajan</div>
+              <div class="metric-value" id="arExposed">—</div>
+              <div class="metric-detail" id="arExposedDetail">—</div>
+            </article>
+            <article class="metric">
+              <div class="metric-label">AR Tidak Terpajan</div>
+              <div class="metric-value" id="arUnexposed">—</div>
+              <div class="metric-detail" id="arUnexposedDetail">—</div>
+            </article>
+            <article class="metric featured">
+              <div class="metric-label">Risk Ratio</div>
+              <div class="metric-value" id="rr">—</div>
+              <div class="metric-detail" id="rrCI">95% CI: —</div>
+            </article>
+            <article class="metric">
+              <div class="metric-label">Chi-square p-value</div>
+              <div class="metric-value" id="pValue">—</div>
+              <div class="metric-detail">Pearson χ², 1 df</div>
+            </article>
+          </div>
+
+          <div class="interpretation" id="interpretation">
+            Masukkan data atau tekan <b>LOAD DEMO</b>, kemudian tekan <b>KIRA WABAK</b>.
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-head">
+              <h2>Epidemic curve</h2>
+              <div id="curveSummary">Tiada data onset.</div>
+            </div>
+            <div class="chart-scroll">
+              <svg id="epiChart" role="img" aria-label="Epidemic curve" viewBox="0 0 900 340"></svg>
+            </div>
+          </div>
+        </section>
+
+        <div class="disclaimer">
+          <b>Nota penggunaan:</b> Ini ialah alat sokongan epidemiologi lapangan. Takrif kes, populasi berisiko,
+          tempoh inkubasi, hubungan epidemiologi dan denominators perlu ditentukan berdasarkan siasatan sebenar
+          serta garis panduan KKM semasa. Kalkulator ini tidak menggantikan penilaian epidemiologi profesional.
+        </div>
+
+        <footer>
+          ZAP! Outbreak Calculator · GitHub Pages ready
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
