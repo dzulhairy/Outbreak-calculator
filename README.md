@@ -1,4 +1,4 @@
-# ZAP! Outbreak Investigator — V3 Professional Edition
+# Outbreak Investigator
 
 A static, GitHub Pages-ready field epidemiology decision-support application.
 
